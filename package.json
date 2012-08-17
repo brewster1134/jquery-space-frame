@@ -1,0 +1,7 @@
+{
+  "name" : "Space Frame",
+  "version" : "0.0.1",
+  "devDependencies": {
+    "coffee-script": "1.3.3"
+  }
+}
