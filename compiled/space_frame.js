@@ -2,123 +2,135 @@
 (function() {
 
   $.fn.SpaceFrame = function() {
-    var bottomPanels, clipPanels, contents, leftPanels, maxContentHeight, maxContentWidth, panelFour, panelIndex, panelOne, panelThree, panelTwo, restrictAxis, rightPanels, scrubber, topPanels;
-    scrubber = this.find('.space-scrubber');
-    contents = this.find('.space-content');
-    panelOne = contents.filter('.left').not('.bottom');
-    panelTwo = contents.filter('.right').not('.bottom');
-    panelThree = contents.filter('.left.bottom');
-    panelFour = contents.filter('.right.bottom');
-    leftPanels = panelOne.add(panelThree);
-    rightPanels = panelTwo.add(panelFour);
-    topPanels = panelOne.add(panelTwo);
-    bottomPanels = panelThree.add(panelFour);
-    if (bottomPanels.length === 0) {
-      restrictAxis = 'x';
-    } else if (rightPanels.length === 0) {
-      restrictAxis = 'y';
-    }
-    maxContentWidth = null;
-    maxContentHeight = null;
-    panelIndex = contents.length;
-    this.css({
-      width: function() {
-        contents.each(function() {
-          if (!$(this).is(':empty')) {
-            return maxContentWidth = Math.max(maxContentWidth, $(this).width());
-          }
-        });
-        return maxContentWidth;
-      },
-      height: function() {
-        contents.each(function() {
-          if (!$(this).is(':empty')) {
-            return maxContentHeight = Math.max(maxContentHeight, $(this).height());
-          }
-        });
-        return maxContentHeight;
+    return this.each(function() {
+      var bottomPanels, clipPanels, contents, leftPanels, maxContentHeight, maxContentWidth, panelFour, panelIndex, panelOne, panelThree, panelTwo, restrictAxis, rightPanels, scrubber, topPanels;
+      scrubber = $(this).find('.space-scrubber');
+      contents = $(this).find('.space-panel');
+      panelOne = $(contents.get(0));
+      panelTwo = $(contents.get(1));
+      panelThree = $(contents.get(2));
+      panelFour = $(contents.get(3));
+      if ($(this).hasClass('x')) {
+        if (contents.length !== 2) {
+          console.warn('There should only be 2 panels for a x axis space frame!');
+        }
+        restrictAxis = 'x';
+      } else if ($(this).hasClass('y')) {
+        if (contents.length !== 2) {
+          console.warn('There should only be 2 panels for a y axis space frame!');
+        }
+        restrictAxis = 'y';
       }
-    });
-    topPanels.css({
-      top: 0
-    });
-    bottomPanels.css({
-      bottom: 0
-    });
-    rightPanels.css({
-      right: 0
-    });
-    leftPanels.css({
-      left: 0
-    });
-    scrubber.css({
-      marginTop: (scrubber.height() / 2) * -1,
-      marginBottom: (scrubber.height() / 2) * -1,
-      marginLeft: (scrubber.width() / 2) * -1,
-      marginRight: (scrubber.width() / 2) * -1
-    });
-    contents.each(function() {
+      maxContentWidth = null;
+      maxContentHeight = null;
+      panelIndex = contents.length;
+      leftPanels = panelOne.add(panelThree);
+      rightPanels = panelTwo.add(panelFour);
+      topPanels = panelOne.add(panelTwo);
+      bottomPanels = panelThree.add(panelFour);
       $(this).css({
-        zIndex: panelIndex
-      });
-      return panelIndex--;
-    });
-    clipPanels = function(xPos, yPos) {
-      xPos = restrictAxis === 'y' ? maxContentWidth : xPos;
-      yPos = restrictAxis === 'x' ? maxContentHeight : yPos;
-      panelOne.stop().animate({
-        fontSize: 100
-      }, {
-        step: function(now, fx) {
-          return $(this).css({
-            clip: 'rect(0px, ' + xPos + 'px, ' + yPos + 'px, 0px)'
+        width: function() {
+          contents.each(function() {
+            if (!$(this).is(':empty')) {
+              return maxContentWidth = Math.max(maxContentWidth, $(this).width());
+            }
           });
+          return maxContentWidth;
+        },
+        height: function() {
+          contents.each(function() {
+            if (!$(this).is(':empty')) {
+              return maxContentHeight = Math.max(maxContentHeight, $(this).height());
+            }
+          });
+          return maxContentHeight;
         }
       });
-      panelTwo.stop().animate({
-        fontSize: 100
-      }, {
-        step: function(now, fx) {
-          return $(this).css({
-            clip: 'rect(0px, ' + maxContentWidth + 'px, ' + yPos + 'px, ' + xPos + 'px)'
-          });
+      leftPanels.css({
+        left: 0
+      });
+      rightPanels.css({
+        right: 0
+      });
+      topPanels.css({
+        top: 0
+      });
+      bottomPanels.css({
+        bottom: 0
+      });
+      scrubber.css({
+        marginTop: (scrubber.height() / 2) * -1,
+        marginBottom: (scrubber.height() / 2) * -1,
+        marginLeft: (scrubber.width() / 2) * -1,
+        marginRight: (scrubber.width() / 2) * -1
+      });
+      contents.each(function() {
+        $(this).css({
+          zIndex: panelIndex
+        });
+        return panelIndex--;
+      });
+      clipPanels = function(xPos, yPos) {
+        if (restrictAxis === 'y') {
+          panelTwo = panelFour;
+        }
+        xPos = restrictAxis === 'y' ? maxContentWidth : xPos;
+        yPos = restrictAxis === 'x' ? maxContentHeight : yPos;
+        panelOne.stop().animate({
+          fontSize: 100
+        }, {
+          step: function(now, fx) {
+            return $(this).css({
+              clip: 'rect(0px, ' + xPos + 'px, ' + yPos + 'px, 0px)'
+            });
+          }
+        }, 10000);
+        panelTwo.stop().animate({
+          fontSize: 100
+        }, {
+          step: function(now, fx) {
+            return $(this).css({
+              clip: 'rect(0px, ' + maxContentWidth + 'px, ' + yPos + 'px, ' + xPos + 'px)'
+            });
+          }
+        }, 10000);
+        panelThree.stop().animate({
+          fontSize: 100
+        }, {
+          step: function(now, fx) {
+            return $(this).css({
+              clip: 'rect(' + yPos + 'px, ' + xPos + 'px, ' + maxContentHeight + 'px, 0px)'
+            });
+          }
+        }, 10000);
+        return panelFour.stop().animate({
+          fontSize: 100
+        }, {
+          step: function(now, fx) {
+            return $(this).css({
+              clip: 'rect(' + yPos + 'px, ' + maxContentWidth + 'px, ' + maxContentHeight + 'px, ' + xPos + 'px)'
+            });
+          }
+        }, 10000);
+      };
+      scrubber.draggable({
+        containment: 'parent',
+        drag: function(e, ui) {
+          return clipPanels(ui.position.left, ui.position.top);
         }
       });
-      panelThree.stop().animate({
-        fontSize: 100
-      }, {
-        step: function(now, fx) {
-          return $(this).css({
-            clip: 'rect(' + yPos + 'px, ' + xPos + 'px, ' + maxContentHeight + 'px, 0px)'
-          });
-        }
-      });
-      return panelFour.stop().animate({
-        fontSize: 100
-      }, {
-        step: function(now, fx) {
-          return $(this).css({
-            clip: 'rect(' + yPos + 'px, ' + maxContentWidth + 'px, ' + maxContentHeight + 'px, ' + xPos + 'px)'
-          });
-        }
-      });
-    };
-    scrubber.draggable({
-      containment: 'parent',
-      drag: function(e, ui) {
-        return clipPanels(ui.position.left, ui.position.top);
+      if (restrictAxis) {
+        scrubber.draggable('option', 'axis', restrictAxis);
       }
-    });
-    if (restrictAxis) {
-      scrubber.draggable('option', 'axis', restrictAxis);
-    }
-    return scrubber.on({
-      touchmove: function(e) {
-        var xPos, yPos;
-        e.preventDefault();
-        xPos = e.originalEvent.changedTouches[0].pageX;
-        return yPos = e.originalEvent.changedTouches[0].pageY;
-      }
+      scrubber.on({
+        touchmove: function(e) {
+          var xPos, yPos;
+          e.preventDefault();
+          xPos = e.originalEvent.changedTouches[0].pageX;
+          return yPos = e.originalEvent.changedTouches[0].pageY;
+        }
+      });
+      return clipPanels(250, 250);
     });
   };
 

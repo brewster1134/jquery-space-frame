@@ -9,17 +9,34 @@
     %script{ type: 'text/javascript', src: 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js' }
     %script{ type: 'text/javascript', src: '../space_frame.js' }
     :javascript
-      $(document).ready(function() {
+      $(window).load(function(){
         $('.space-frame').SpaceFrame();
       });
   %body
-    .space-frame
+    %h1 4 Panel
+    .space-frame#four_panel
       .space-scrubber
-      .space-content.left
+      .space-panel
         %img{ src: 'kitty.jpg'}
-      .space-content.right
+      .space-panel
         %img{ src: 'kitty_red.jpg'}
-      .space-content.left.bottom
+      .space-panel
         %img{ src: 'kitty_green.jpg'}
-      .space-content.right.bottom
+      .space-panel
+        %img{ src: 'kitty_blue.jpg'}
+
+    %h1 2 Panel Left/Right
+    .space-frame.x#two_panel_left_right
+      .space-scrubber
+      .space-panel
+        %img{ src: 'kitty_red.jpg'}
+      .space-panel
+        %img{ src: 'kitty_blue.jpg'}
+
+    %h1 2 Panel Top/Bottom
+    .space-frame.y#two_panel_top_bottom
+      .space-scrubber
+      .space-panel
+        %img{ src: 'kitty_green.jpg'}
+      .space-panel
         %img{ src: 'kitty_blue.jpg'}
