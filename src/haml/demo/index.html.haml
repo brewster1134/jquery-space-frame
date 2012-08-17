@@ -1,0 +1,25 @@
+!!! 5
+%html
+  %head
+    %title Space Frame
+    %meta{ charset: 'utf-8' }
+    %link{ type: 'text/css', rel: 'stylesheet', media: 'all', href: '../space_frame.css' }
+    %link{ type: 'text/css', rel: 'stylesheet', media: 'all', href: 'demo.css' }
+    %script{ type: 'text/javascript', src: 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' }
+    %script{ type: 'text/javascript', src: 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js' }
+    %script{ type: 'text/javascript', src: '../space_frame.js' }
+    :javascript
+      $(document).ready(function() {
+        $('.space-frame').SpaceFrame();
+      });
+  %body
+    .space-frame
+      .space-scrubber
+      .space-content.left
+        %img{ src: 'kitty.jpg'}
+      .space-content.right
+        %img{ src: 'kitty_red.jpg'}
+      .space-content.left.bottom
+        %img{ src: 'kitty_green.jpg'}
+      .space-content.right.bottom
+        %img{ src: 'kitty_blue.jpg'}

@@ -1,9 +1,5 @@
 $.fn.SpaceFrame = ->
-  maxContentWidth = null
-  maxContentHeight = null
-
-  # INITIALIZE
-  # elements
+  ## ELEMENTS
   scrubber = @find('.space-scrubber')
   contents = @find('.space-content')
 
@@ -19,15 +15,18 @@ $.fn.SpaceFrame = ->
   topPanels = panelOne.add panelTwo
   bottomPanels = panelThree.add panelFour
 
-  # css
-  scrubber.css
-    position: 'absolute',
-    zIndex: contents.length + 1
-  contents.css
-    position: 'absolute',
-    overflow: 'hidden'
+  ## SETUP
+  if bottomPanels.length == 0
+    restrictAxis = 'x'
+  else if rightPanels.length == 0
+    restrictAxis = 'y'
+  maxContentWidth = null
+  maxContentHeight = null
+  panelIndex = contents.length
+
+
+  ## CSS
   @css
-    position: 'relative'
     width: ->
       contents.each ->
         maxContentWidth = Math.max(maxContentWidth, $(@).width()) unless $(@).is(':empty')
@@ -36,7 +35,6 @@ $.fn.SpaceFrame = ->
       contents.each ->
         maxContentHeight = Math.max(maxContentHeight, $(@).height()) unless $(@).is(':empty')
       maxContentHeight
-  console.log @css('width')
   topPanels.css
     top: 0
   bottomPanels.css
@@ -45,30 +43,51 @@ $.fn.SpaceFrame = ->
     right: 0
   leftPanels.css
     left: 0
-
-  layerIndex = contents.length
+  scrubber.css
+    marginTop: (scrubber.height() / 2) * -1,
+    marginBottom: (scrubber.height() / 2) * -1,
+    marginLeft: (scrubber.width() / 2) * -1,
+    marginRight: (scrubber.width() / 2) * -1
   contents.each ->
     $(@).css
-      zIndex: layerIndex
-    layerIndex--
+      zIndex: panelIndex
+    panelIndex--
 
-  clipPanels = ->
-    # $('.testImg').stop().animate({'clip':'rect(0px 400px 300px 0px)'}, 1000)
 
-  # events
+  ## ANIMATION
+  # fontSize: 100 is need as filler css so values get returned
+  clipPanels = (xPos, yPos) ->
+    xPos = if restrictAxis == 'y' then maxContentWidth else xPos
+    yPos = if restrictAxis == 'x' then maxContentHeight else yPos
+    panelOne.stop().animate fontSize: 100,
+      step: (now, fx) ->
+        $(@).css
+          clip: 'rect(0px, ' + xPos + 'px, ' + yPos + 'px, 0px)'
+    panelTwo.stop().animate fontSize: 100,
+      step: (now, fx) ->
+        $(@).css
+          clip: 'rect(0px, ' + maxContentWidth + 'px, ' + yPos + 'px, ' + xPos + 'px)'
+    panelThree.stop().animate fontSize: 100,
+      step: (now, fx) ->
+        $(@).css
+          clip: 'rect(' + yPos + 'px, ' + xPos + 'px, ' + maxContentHeight + 'px, 0px)'
+    panelFour.stop().animate fontSize: 100,
+      step: (now, fx) ->
+        $(@).css
+          clip: 'rect(' + yPos + 'px, ' + maxContentWidth + 'px, ' + maxContentHeight + 'px, ' + xPos + 'px)'
+
+
+  ## EVENTS
+  scrubber.draggable
+    containment: 'parent',
+    drag: (e, ui) ->
+      clipPanels ui.position.left, ui.position.top
+  # restict axis'
+  scrubber.draggable 'option', 'axis', restrictAxis if restrictAxis
+
+  # iOS
   scrubber.on
-    # iOS
     touchmove: (e) ->
       e.preventDefault()
       xPos = e.originalEvent.changedTouches[0].pageX
       yPos = e.originalEvent.changedTouches[0].pageY
-
-
-
-
-
-
-  # FOR DEVELOPMENT
-  scrubber.on
-    click: ->
-      $(@).trigger 'touchmove'

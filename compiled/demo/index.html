@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Space Frame</title>
+    <meta charset='utf-8' />
+    <link href='../space_frame.css' media='all' rel='stylesheet' type='text/css' />
+    <link href='demo.css' media='all' rel='stylesheet' type='text/css' />
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js' type='text/javascript'></script>
+    <script src='../space_frame.js' type='text/javascript'></script>
+    <script type='text/javascript'>
+      //<![CDATA[
+        $(document).ready(function() {
+          $('.space-frame').SpaceFrame();
+        });
+      //]]>
+    </script>
+  </head>
+  <body>
+    <div class='space-frame'>
+      <div class='space-scrubber'></div>
+      <div class='space-content left'>
+        <img src='kitty.jpg' />
+      </div>
+      <div class='space-content right'>
+        <img src='kitty_red.jpg' />
+      </div>
+      <div class='space-content left bottom'>
+        <img src='kitty_green.jpg' />
+      </div>
+      <div class='space-content right bottom'>
+        <img src='kitty_blue.jpg' />
+      </div>
+    </div>
+  </body>
+</html>
