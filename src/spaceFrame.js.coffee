@@ -91,22 +91,24 @@ unless window.console
 
     animate: (positionArray) ->
       @each ->
-        $this = $(@).data('spaceFrame').target
-        xPos = positionArray[0]
-        yPos = positionArray[1]
-        clipPanels $this, xPos, yPos, true
+        if $(@).data('spaceFrame')
+          $this = $(@).data('spaceFrame').target
+          xPos = positionArray[0]
+          yPos = positionArray[1]
+          clipPanels $this, xPos, yPos, true
 
     refresh: ->
       @each ->
-        $this = $(@).data('spaceFrame').target
-        $this.data('spaceFrame', null)
+        $this = $(@)
+        $this.data('spaceFrame', null) if $(@).data('spaceFrame')
         $this.spaceFrame('init')
 
     destroy: ->
       @each ->
-        $this = $(@).data('spaceFrame').target
+        $this = $(@)
         $this.find('.space-scrubber').hide()
         $this.find('.space-panel').css('clip', '')
+        $this.data('spaceFrame', null)
 
 
   $.fn.spaceFrame = (method) ->

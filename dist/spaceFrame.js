@@ -112,26 +112,31 @@ if (!window.console) {
     animate: function(positionArray) {
       return this.each(function() {
         var $this, xPos, yPos;
-        $this = $(this).data('spaceFrame').target;
-        xPos = positionArray[0];
-        yPos = positionArray[1];
-        return clipPanels($this, xPos, yPos, true);
+        if ($(this).data('spaceFrame')) {
+          $this = $(this).data('spaceFrame').target;
+          xPos = positionArray[0];
+          yPos = positionArray[1];
+          return clipPanels($this, xPos, yPos, true);
+        }
       });
     },
     refresh: function() {
       return this.each(function() {
         var $this;
-        $this = $(this).data('spaceFrame').target;
-        $this.data('spaceFrame', null);
+        $this = $(this);
+        if ($(this).data('spaceFrame')) {
+          $this.data('spaceFrame', null);
+        }
         return $this.spaceFrame('init');
       });
     },
     destroy: function() {
       return this.each(function() {
         var $this;
-        $this = $(this).data('spaceFrame').target;
+        $this = $(this);
         $this.find('.space-scrubber').hide();
-        return $this.find('.space-panel').css('clip', '');
+        $this.find('.space-panel').css('clip', '');
+        return $this.data('spaceFrame', null);
       });
     }
   };

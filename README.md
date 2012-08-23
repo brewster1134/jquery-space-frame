@@ -4,20 +4,20 @@ A space frame.
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
+Download the [CSS][css] file
 
 [min]: https://raw.github.com/brewster1134/jquery-space-frame/master/dist/spaceFrame.min.js
 [max]: https://raw.github.com/brewster1134/jquery-space-frame/master/dist/spaceFrame.js
+[css]: https://raw.github.com/brewster1134/jquery-space-frame/master/dist/spaceFrame.css
 
-In your web page:
+In your web page, include the neccessary js and css:
 
-```html
-<script src="jquery.js"></script>
-<script src="dist/spaceFrame.min.js"></script>
-<script>
-jQuery(function($) {
-  $.awesome(); // "awesome"
-});
-</script>
+```html (shown in HAML)
+%head
+  %link{ type: "text/css", rel: "stylesheet", media: "all", href: "spaceFrame.css" }
+  %script{ type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" }
+  %script{ type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" }
+  %script{ type: "text/javascript", src: "spaceFrame.min.js" }
 ```
 
 ## Documentation
@@ -75,9 +75,13 @@ WebKit computing width/height of the various panels.
 
 #### JS (shown in CoffeeScript)
 
+Initialize the spaceframe
+
 ``` coffee-script
-$(window).load ->
-  $('.space-frame').SpaceFrame()
+(($) ->
+  $(window).load ->
+    $('.space-frame').SpaceFrame()
+) jQuery
 ```
 
 #### Demo
