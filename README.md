@@ -12,7 +12,7 @@ Download the [CSS][css] file
 
 In your web page, include the neccessary js and css:
 
-```html (shown in HAML)
+``` haml
 %head
   %link{ type: "text/css", rel: "stylesheet", media: "all", href: "spaceFrame.css" }
   %script{ type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" }
