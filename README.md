@@ -93,9 +93,13 @@ _(Nothing yet)_
 
 ## TODO
 
-* qUnit Tests
+* Write _actual_ qUnit Tests
+* Fix animation with WebKit
+  The jQuery.fx clip animation has issues in WebKit with jumping to the last frame.
 * Test with IE
-* Test with iOS
+  The jQuery.fx clip animation has issues in IE with using 'clip' as a css property.  Need to investigate how the jquery.fx.animate function handles css properties.
+* Add functionality to iOS
+  Need to integrate iOS' touchmove event into the spaceFrame
 
 #### 3rd Party dependencies
 * Update `grunt.js` when grunt-sass resolves [Issue 2](https://github.com/sindresorhus/grunt-sass/issues/2)

@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-haml');
   grunt.loadNpmTasks('grunt-coffee');
   grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-shell');
 
   // Project configuration.
   grunt.initConfig({
@@ -16,7 +17,7 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:dist/<%= pkg.name %>.js.js>'],
+        src: ['<banner:meta.banner>', '<file_strip_banner:dist/<%= pkg.name %>.js>'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -34,7 +35,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<config:lint.files>', 'src/**/*'],
-      tasks: 'coffee haml concat qunit' // sass
+      tasks: 'coffee haml shell concat qunit'
     },
     jshint: {
       options: {
@@ -85,7 +86,7 @@ module.exports = function(grunt) {
         dest: "test/index.html"
       }
     },
-    sass: {
+    sass: { // do not use until grunt 0.4 when .sass is supported
       app: {
         src: 'src/spaceFrame.css.sass',
         dest: 'dist/spaceFrame.css'
@@ -94,13 +95,26 @@ module.exports = function(grunt) {
         src: 'src/demo/demo.css.sass',
         dest: 'demo/demo.css'
       }
+    },
+    shell: {
+      sass_app: {
+        command: 'sass src/spaceFrame.css.sass dist/spaceFrame.css'
+      },
+      sass_demo: {
+        command: 'sass src/demo/demo.css.sass demo/demo.css'
+      },
+      rename_jsjs: {
+        command: 'mv dist/spaceFrame.js.js dist/spaceFrame.js;mv demo/demo.js.js demo/demo.js;mv test/test.js.js test/test.js;'
+      },
+      _options: {
+        stdout: true
+      }
     }
   });
 
   // Default task.
   grunt.registerTask('default', 'dist');
-  grunt.registerTask('dist', 'coffee:app concat min'); // sass:app
-  grunt.registerTask('demo', 'dist coffee:demo haml:demo'); // sass:demo
-  grunt.registerTask('test', 'dist coffee:test haml:test lint qunit'); // sass:demo
-
+  grunt.registerTask('dist', 'coffee:app shell:rename_jsjs shell:sass_app concat min');
+  grunt.registerTask('demo', 'dist coffee:demo shell:rename_jsjs haml:demo shell:sass_demo');
+  grunt.registerTask('test', 'dist coffee:test shell:rename_jsjs haml:test lint qunit');
 };

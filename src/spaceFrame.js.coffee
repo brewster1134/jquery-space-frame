@@ -6,61 +6,68 @@
 # * Licensed under the MIT license.
 #
 
-unless window.console
-  console = log: ->
+# usage: log('inside coolFunc',this,arguments);
+# paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
+window.log = ->
+  log.history = log.history or [] # store logs to an array for reference
+  log.history.push arguments_
+  console.log Array::slice.call(arguments_) if @console
 
 (($) ->
   methods =
     init: (options) ->
+      defaults =
+        speed: 500
       @each ->
-        $this = $(@)
-        data = $this.data('space-frame')
+        $sf = $(@)
+        $sf.options = $.extend options, defaults
+        data = $sf.data('space-frame')
 
         unless data
-          $this.data 'space-frame',
-            target: $this
+          $sf.data 'space-frame',
+            target: $sf
 
-          scrubber = $this.find('.space-scrubber')
-          contents = $this.find('.space-panel')
-          $this.panelOne = $(contents.get(0))
-          $this.panelTwo = $(contents.get(1))
-          $this.panelThree = $(contents.get(2))
-          $this.panelFour = $(contents.get(3))
-          leftPanels = $this.panelOne.add $this.panelThree
-          rightPanels = $this.panelTwo.add $this.panelFour
-          topPanels = $this.panelOne.add $this.panelTwo
-          bottomPanels = $this.panelThree.add $this.panelFour
+          scrubber = $sf.find('.space-scrubber')
+          contents = $sf.find('.space-panel')
+          $sf.panelOne = $(contents.get(0))
+          $sf.panelTwo = $(contents.get(1))
+          $sf.panelThree = $(contents.get(2))
+          $sf.panelFour = $(contents.get(3))
+          leftPanels = $sf.panelOne.add $sf.panelThree
+          rightPanels = $sf.panelTwo.add $sf.panelFour
+          topPanels = $sf.panelOne.add $sf.panelTwo
+          bottomPanels = $sf.panelThree.add $sf.panelFour
 
-          $this.maxContentWidth = null
-          $this.maxContentHeight = null
+          $sf.maxContentWidth = null
+          $sf.maxContentHeight = null
           panelIndex = contents.length
 
-          if $this.hasClass 'x'
+          if $sf.hasClass 'x'
             console.warn 'There should only be 2 panels for an x axis space frame!' if contents.length != 2
-            $this.restrictAxis = 'x'
-          else if $this.hasClass 'y'
+            $sf.restrictAxis = 'x'
+          else if $sf.hasClass 'y'
             console.warn 'There should only be 2 panels for a y axis space frame!' if contents.length != 2
-            $this.restrictAxis = 'y'
+            $sf.restrictAxis = 'y'
 
-          $this.css
+          $sf.css
             width: ->
               contents.each ->
-                $this.maxContentWidth = Math.max($this.maxContentWidth, $(@).width()) unless $(@).is(':empty')
-              $this.maxContentWidth
+                $sf.maxContentWidth = Math.max($sf.maxContentWidth, $(@).width()) unless $(@).is(':empty')
+              $sf.maxContentWidth
             height: ->
               contents.each ->
-                $this.maxContentHeight = Math.max($this.maxContentHeight, $(@).height()) unless $(@).is(':empty')
-              $this.maxContentHeight
+                $sf.maxContentHeight = Math.max($sf.maxContentHeight, $(@).height()) unless $(@).is(':empty')
+              $sf.maxContentHeight
           scrubber.css
             display: 'block',
             marginTop: (scrubber.height() / 2) * -1,
             marginBottom: (scrubber.height() / 2) * -1,
             marginLeft: (scrubber.width() / 2) * -1,
             marginRight: (scrubber.width() / 2) * -1,
-            top:  $this.maxContentHeight,
-            left:  $this.maxContentWidth
+            top:  $sf.maxContentHeight,
+            left:  $sf.maxContentWidth
           contents.css
-            clip: 'rect(0px, ' + $this.maxContentWidth + 'px, ' + $this.maxContentHeight + 'px, 0px)'
+            clip: 'rect(0px, ' + $sf.maxContentWidth + 'px, ' + $sf.maxContentHeight + 'px, 0px)'
           contents.each ->
             $(@).css
               zIndex: panelIndex
@@ -78,37 +85,35 @@ unless window.console
           scrubber.draggable
             containment: 'parent',
             drag: (e, ui) ->
-              clipPanels $this, ui.position.left, ui.position.top, false
+              clipPanels $sf, ui.position.left, ui.position.top, false
           # restict axis'
-          scrubber.draggable 'option', 'axis', $this.restrictAxis if $this.restrictAxis
+          scrubber.draggable 'option', 'axis', $sf.restrictAxis if $sf.restrictAxis
 
-          # iOS
+          # iOS TODO
           scrubber.on
             touchmove: (e) ->
-              # e.preventDefault()
-              # xPos = e.originalEvent.changedTouches[0].pageX
-              # yPos = e.originalEvent.changedTouches[0].pageY
+              console.log e
 
     animate: (positionArray) ->
       @each ->
         if $(@).data('spaceFrame')
-          $this = $(@).data('spaceFrame').target
+          $sf = $(@).data('spaceFrame').target
           xPos = positionArray[0]
           yPos = positionArray[1]
-          clipPanels $this, xPos, yPos, true
+          clipPanels $sf, xPos, yPos, true
 
     refresh: ->
       @each ->
-        $this = $(@)
-        $this.data('spaceFrame', null) if $(@).data('spaceFrame')
-        $this.spaceFrame('init')
+        $sf = $(@)
+        $sf.data('spaceFrame', null) if $(@).data('spaceFrame')
+        $sf.spaceFrame('init')
 
     destroy: ->
       @each ->
-        $this = $(@)
-        $this.find('.space-scrubber').hide()
-        $this.find('.space-panel').css('clip', '')
-        $this.data('spaceFrame', null)
+        $sf = $(@)
+        $sf.find('.space-scrubber').hide()
+        $sf.find('.space-panel').css('clip', '')
+        $sf.data('spaceFrame', null)
 
 
   $.fn.spaceFrame = (method) ->
@@ -119,37 +124,36 @@ unless window.console
     else
       $.error "Method " + method + " does not exist for the spaceFrame"
 
-  resize = (spaceFrame) ->
-    console.log spaceFrame.data('spaceFrame')
-
-
-  clipPanels = (spaceFrame, xPos, yPos, animate = true) ->
-    if spaceFrame.restrictAxis == 'x'
-      clipPanel spaceFrame.panelOne, 0, xPos, spaceFrame.maxContentHeight, 0, animate
-      clipPanel spaceFrame.panelTwo, 0, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, xPos, animate
-    else if spaceFrame.restrictAxis == 'y'
-      clipPanel spaceFrame.panelOne, 0, spaceFrame.maxContentWidth, yPos, 0, animate
-      clipPanel spaceFrame.panelTwo, yPos, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, 0, animate
+  clipPanels = (sf, xPos, yPos, animate = true) ->
+    if sf.restrictAxis == 'x'
+      clipPanel sf.panelOne, 0, xPos, sf.maxContentHeight, 0, animate
+      clipPanel sf.panelTwo, 0, sf.maxContentWidth, sf.maxContentHeight, xPos, animate
+    else if sf.restrictAxis == 'y'
+      clipPanel sf.panelOne, 0, sf.maxContentWidth, yPos, 0, animate
+      clipPanel sf.panelTwo, yPos, sf.maxContentWidth, sf.maxContentHeight, 0, animate
     else
-      clipPanel spaceFrame.panelOne, 0, xPos, yPos, 0, animate
-      clipPanel spaceFrame.panelTwo, 0, spaceFrame.maxContentWidth, yPos, xPos, animate
-      clipPanel spaceFrame.panelThree, yPos, xPos, spaceFrame.maxContentHeight, 0, animate
-      clipPanel spaceFrame.panelFour, yPos, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, xPos, animate
+      clipPanel sf.panelOne, 0, xPos, yPos, 0, animate
+      clipPanel sf.panelTwo, 0, sf.maxContentWidth, yPos, xPos, animate
+      clipPanel sf.panelThree, yPos, xPos, sf.maxContentHeight, 0, animate
+      clipPanel sf.panelFour, yPos, sf.maxContentWidth, sf.maxContentHeight, xPos, animate
     if animate == true
-      spaceFrame.find('.space-scrubber').animate
+      sf.find('.space-scrubber').animate
         top: xPos,
         left: yPos
+      , sf.options.speed
 
   clipPanel = (panel, top, right, bottom, left, animate) ->
+    sf = panel.parent().data('space-frame').target
     clipCss = (panel) ->
       panel.css
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
 
     if animate == true
-      scrubber = $(panel.parent()).find('.space-scrubber')
-      panel.stop().animate
+      panel.stop(true).animate
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
-      , step: (now, fx) ->
+      ,
+        duration: sf.options.speed,
+        step: (now, fx) ->
           clipRE = /rect\(([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)\)/
           startRE = fx.start.match clipRE
           endRE = fx.end.match clipRE
@@ -160,9 +164,7 @@ unless window.console
           left = parseInt(startRE[7], 10) + fx.pos * (parseInt(endRE[7], 10) - parseInt(startRE[7], 10))
 
           clipCss panel
-        , 10000
     else
       clipCss panel
 
 ) jQuery
-

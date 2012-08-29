@@ -1,67 +1,80 @@
-/*! Space Frame - v0.1.0 - 2012-08-22
+/*! Space Frame - v0.1.0 - 2012-08-28
 * https://github.com/brewster1134/jquery-space-frame
 * Copyright (c) 2012 Ryan Brewster; Licensed MIT */
 
-var console;
 
 if (!window.console) {
-  console = {
-    log: function() {}
+  window.console = function() {
+    this.log = function(str) {};
+    return this.dir = function(str) {};
   };
 }
 
+window.log = function() {
+  log.history = log.history || [];
+  log.history.push(arguments_);
+  if (this.console) {
+    return console.log(Array.prototype.slice.call(arguments_));
+  }
+};
+
 (function($) {
-  var clipPanel, clipPanels, methods, resize;
+  var clipPanel, clipPanels, methods;
   methods = {
     init: function(options) {
+      var defaults;
+      defaults = {
+        speed: 500
+      };
       return this.each(function() {
-        var $this, bottomPanels, contents, data, leftPanels, panelIndex, rightPanels, scrubber, topPanels;
-        $this = $(this);
-        data = $this.data('space-frame');
+        var $sf, bottomPanels, contents, data, leftPanels, panelIndex, rightPanels, scrubber, topPanels;
+        $sf = $(this);
+        $sf.options = $.extend(options, defaults);
+        data = $sf.data('space-frame');
         if (!data) {
-          $this.data('space-frame', {
-            target: $this
+          $sf.data('space-frame', {
+            target: $sf
           });
-          scrubber = $this.find('.space-scrubber');
-          contents = $this.find('.space-panel');
-          $this.panelOne = $(contents.get(0));
-          $this.panelTwo = $(contents.get(1));
-          $this.panelThree = $(contents.get(2));
-          $this.panelFour = $(contents.get(3));
-          leftPanels = $this.panelOne.add($this.panelThree);
-          rightPanels = $this.panelTwo.add($this.panelFour);
-          topPanels = $this.panelOne.add($this.panelTwo);
-          bottomPanels = $this.panelThree.add($this.panelFour);
-          $this.maxContentWidth = null;
-          $this.maxContentHeight = null;
+          scrubber = $sf.find('.space-scrubber');
+          contents = $sf.find('.space-panel');
+          $sf.panelOne = $(contents.get(0));
+          $sf.panelTwo = $(contents.get(1));
+          $sf.panelThree = $(contents.get(2));
+          $sf.panelFour = $(contents.get(3));
+          leftPanels = $sf.panelOne.add($sf.panelThree);
+          rightPanels = $sf.panelTwo.add($sf.panelFour);
+          topPanels = $sf.panelOne.add($sf.panelTwo);
+          bottomPanels = $sf.panelThree.add($sf.panelFour);
+          $sf.maxContentWidth = null;
+          $sf.maxContentHeight = null;
           panelIndex = contents.length;
-          if ($this.hasClass('x')) {
+          if ($sf.hasClass('x')) {
             if (contents.length !== 2) {
               console.warn('There should only be 2 panels for an x axis space frame!');
             }
-            $this.restrictAxis = 'x';
-          } else if ($this.hasClass('y')) {
+            $sf.restrictAxis = 'x';
+          } else if ($sf.hasClass('y')) {
             if (contents.length !== 2) {
               console.warn('There should only be 2 panels for a y axis space frame!');
             }
-            $this.restrictAxis = 'y';
+            $sf.restrictAxis = 'y';
           }
-          $this.css({
+          $sf.css({
             width: function() {
               contents.each(function() {
                 if (!$(this).is(':empty')) {
-                  return $this.maxContentWidth = Math.max($this.maxContentWidth, $(this).width());
+                  return $sf.maxContentWidth = Math.max($sf.maxContentWidth, $(this).width());
                 }
               });
-              return $this.maxContentWidth;
+              return $sf.maxContentWidth;
             },
             height: function() {
               contents.each(function() {
                 if (!$(this).is(':empty')) {
-                  return $this.maxContentHeight = Math.max($this.maxContentHeight, $(this).height());
+                  return $sf.maxContentHeight = Math.max($sf.maxContentHeight, $(this).height());
                 }
               });
-              return $this.maxContentHeight;
+              return $sf.maxContentHeight;
             }
           });
           scrubber.css({
@@ -70,11 +83,11 @@ if (!window.console) {
             marginBottom: (scrubber.height() / 2) * -1,
             marginLeft: (scrubber.width() / 2) * -1,
             marginRight: (scrubber.width() / 2) * -1,
-            top: $this.maxContentHeight,
-            left: $this.maxContentWidth
+            top: $sf.maxContentHeight,
+            left: $sf.maxContentWidth
           });
           contents.css({
-            clip: 'rect(0px, ' + $this.maxContentWidth + 'px, ' + $this.maxContentHeight + 'px, 0px)'
+            clip: 'rect(0px, ' + $sf.maxContentWidth + 'px, ' + $sf.maxContentHeight + 'px, 0px)'
           });
           contents.each(function() {
             $(this).css({
@@ -97,11 +110,11 @@ if (!window.console) {
           scrubber.draggable({
             containment: 'parent',
             drag: function(e, ui) {
-              return clipPanels($this, ui.position.left, ui.position.top, false);
+              return clipPanels($sf, ui.position.left, ui.position.top, false);
             }
           });
-          if ($this.restrictAxis) {
-            scrubber.draggable('option', 'axis', $this.restrictAxis);
+          if ($sf.restrictAxis) {
+            scrubber.draggable('option', 'axis', $sf.restrictAxis);
           }
           return scrubber.on({
             touchmove: function(e) {}
@@ -111,32 +124,32 @@ if (!window.console) {
     },
     animate: function(positionArray) {
       return this.each(function() {
-        var $this, xPos, yPos;
+        var $sf, xPos, yPos;
         if ($(this).data('spaceFrame')) {
-          $this = $(this).data('spaceFrame').target;
+          $sf = $(this).data('spaceFrame').target;
           xPos = positionArray[0];
           yPos = positionArray[1];
-          return clipPanels($this, xPos, yPos, true);
+          return clipPanels($sf, xPos, yPos, true);
         }
       });
     },
     refresh: function() {
       return this.each(function() {
-        var $this;
-        $this = $(this);
+        var $sf;
+        $sf = $(this);
         if ($(this).data('spaceFrame')) {
-          $this.data('spaceFrame', null);
+          $sf.data('spaceFrame', null);
         }
-        return $this.spaceFrame('init');
+        return $sf.spaceFrame('init');
       });
     },
     destroy: function() {
       return this.each(function() {
-        var $this;
-        $this = $(this);
-        $this.find('.space-scrubber').hide();
-        $this.find('.space-panel').css('clip', '');
-        return $this.data('spaceFrame', null);
+        var $sf;
+        $sf = $(this);
+        $sf.find('.space-scrubber').hide();
+        $sf.find('.space-panel').css('clip', '');
+        return $sf.data('spaceFrame', null);
       });
     }
   };
@@ -149,44 +162,42 @@ if (!window.console) {
       return $.error("Method " + method + " does not exist for the spaceFrame");
     }
   };
-  resize = function(spaceFrame) {
-    return console.log(spaceFrame.data('spaceFrame'));
-  };
-  clipPanels = function(spaceFrame, xPos, yPos, animate) {
+  clipPanels = function(sf, xPos, yPos, animate) {
     if (animate == null) {
       animate = true;
     }
-    if (spaceFrame.restrictAxis === 'x') {
-      clipPanel(spaceFrame.panelOne, 0, xPos, spaceFrame.maxContentHeight, 0, animate);
-      clipPanel(spaceFrame.panelTwo, 0, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, xPos, animate);
-    } else if (spaceFrame.restrictAxis === 'y') {
-      clipPanel(spaceFrame.panelOne, 0, spaceFrame.maxContentWidth, yPos, 0, animate);
-      clipPanel(spaceFrame.panelTwo, yPos, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, 0, animate);
+    if (sf.restrictAxis === 'x') {
+      clipPanel(sf.panelOne, 0, xPos, sf.maxContentHeight, 0, animate);
+      clipPanel(sf.panelTwo, 0, sf.maxContentWidth, sf.maxContentHeight, xPos, animate);
+    } else if (sf.restrictAxis === 'y') {
+      clipPanel(sf.panelOne, 0, sf.maxContentWidth, yPos, 0, animate);
+      clipPanel(sf.panelTwo, yPos, sf.maxContentWidth, sf.maxContentHeight, 0, animate);
     } else {
-      clipPanel(spaceFrame.panelOne, 0, xPos, yPos, 0, animate);
-      clipPanel(spaceFrame.panelTwo, 0, spaceFrame.maxContentWidth, yPos, xPos, animate);
-      clipPanel(spaceFrame.panelThree, yPos, xPos, spaceFrame.maxContentHeight, 0, animate);
-      clipPanel(spaceFrame.panelFour, yPos, spaceFrame.maxContentWidth, spaceFrame.maxContentHeight, xPos, animate);
+      clipPanel(sf.panelOne, 0, xPos, yPos, 0, animate);
+      clipPanel(sf.panelTwo, 0, sf.maxContentWidth, yPos, xPos, animate);
+      clipPanel(sf.panelThree, yPos, xPos, sf.maxContentHeight, 0, animate);
+      clipPanel(sf.panelFour, yPos, sf.maxContentWidth, sf.maxContentHeight, xPos, animate);
     }
     if (animate === true) {
-      return spaceFrame.find('.space-scrubber').animate({
+      return sf.find('.space-scrubber').animate({
         top: xPos,
         left: yPos
-      });
+      }, sf.options.speed);
     }
   };
   return clipPanel = function(panel, top, right, bottom, left, animate) {
-    var clipCss, scrubber;
+    var clipCss, sf;
+    sf = panel.parent().data('space-frame').target;
     clipCss = function(panel) {
       return panel.css({
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
       });
     };
     if (animate === true) {
-      scrubber = $(panel.parent()).find('.space-scrubber');
-      return panel.stop().animate({
+      return panel.stop(true).animate({
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
       }, {
+        duration: sf.options.speed,
         step: function(now, fx) {
           var clipRE, endRE, startRE;
           clipRE = /rect\(([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)[,]? ([0-9.]{1,})(px|em)\)/;
@@ -198,7 +209,7 @@ if (!window.console) {
           left = parseInt(startRE[7], 10) + fx.pos * (parseInt(endRE[7], 10) - parseInt(startRE[7], 10));
           return clipCss(panel);
         }
-      }, 10000);
+      });
     } else {
       return clipCss(panel);
     }

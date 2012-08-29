@@ -3,6 +3,6 @@
   .space-frame .space-scrubber {
     z-index: 5;
     position: absolute;
-    cursor: pointer; }
+    cursor: move; }
   .space-frame .space-panel {
     position: absolute; }
