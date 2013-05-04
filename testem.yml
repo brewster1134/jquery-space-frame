@@ -1,0 +1,13 @@
+test_page: spec/index.html
+before_tests: coffee -o dist/ -c src/*.coffee && coffee -c spec/*.coffee && sass src/spaceFrame.css.sass dist/spaceFrame.css
+src_files:
+  - src/**/*.coffee
+  - spec/*.coffee
+  - spec/index.html
+serve_files:
+  - spec/*
+launch_in_dev:
+  - phantomjs
+launch_in_ci:
+  - phantomjs
+on_exit: rm spec/*.js

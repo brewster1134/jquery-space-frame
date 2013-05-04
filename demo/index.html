@@ -1,2 +1,61 @@
 <!DOCTYPE html>
-<html><head><title>Space Frame</title><meta charset="utf-8" /><link type="text/css" rel="stylesheet" media="all" href="../dist/spaceFrame.css" /><link type="text/css" rel="stylesheet" media="all" href="demo.css" /><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script><script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script><script type="text/javascript" src="../dist/spaceFrame.js"></script><script type="text/javascript" src="demo.js"></script></head><body><button id="animate">Animate</button><button id="refresh">Refresh</button><button id="destroy">Destroy</button><h1>4 Panel</h1><div class="space-frame" id="four_panel"><div class="space-scrubber"></div><div class="space-panel"><img src="kitty.jpg" /></div><div class="space-panel"><img src="kitty_red.jpg" /></div><div class="space-panel"><img src="kitty_green.jpg" /></div><div class="space-panel"><img src="kitty_blue.jpg" /></div></div><h1>2 Panel Left/Right</h1><div class="space-frame x" id="two_panel_left_right"><div class="space-scrubber"></div><div class="space-panel"><img src="kitty_red.jpg" /></div><div class="space-panel"><img src="kitty_blue.jpg" /></div></div><h1>2 Panel Top/Bottom</h1><div class="space-frame y" id="two_panel_top_bottom"><div class="space-scrubber"></div><div class="space-panel"><img src="kitty_green.jpg" /></div><div class="space-panel"><img src="kitty_blue.jpg" /></div></div></body></html>
+<html>
+  <head>
+    <title>Space Frame</title>
+    <link type="text/css" rel="stylesheet" media="all" href="../dist/spaceFrame.css"/>
+    <style>
+      .space-frame .space-scrubber {
+        width: 50px;
+        height: 50px;
+        background: red; }
+      .space-frame .space-panel img {
+        display: block; }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../dist/spaceFrame.js"></script>
+    <script>
+      (function($) {
+        $(window).load(function() {
+          $('.space-frame').spaceFrame();
+          $('button#animate').click(function() {
+            $('.space-frame').spaceFrame('animate', [250, 250]);
+          });
+          $('button#refresh').click(function() {
+            $('.space-frame').spaceFrame('refresh');
+          });
+          $('button#destroy').click(function() {
+            $('.space-frame').spaceFrame('destroy');
+          });
+        });
+      })(jQuery);
+    </script>
+  </head>
+  <body>
+    <button id="animate">Animate</button>
+    <button id="refresh">Refresh</button>
+    <button id="destroy">Destroy</button>
+    <h1>4 Panel</h1>
+    <div class="space-frame" id="four_panel">
+        <div class="space-scrubber"></div>
+        <div class="space-panel"><img src="kitty.jpg" /></div>
+        <div class="space-panel"><img src="kitty_red.jpg" /></div>
+        <div class="space-panel"><img src="kitty_green.jpg" /></div>
+        <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+    </div>
+    <h1>2 Panel Left/Right</h1>
+    <div class="space-frame x" id="two_panel_left_right">
+        <div class="space-scrubber">
+        </div>
+        <div class="space-panel"><img src="kitty_red.jpg" /></div>
+        <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+    </div>
+    <h1>2 Panel Top/Bottom</h1>
+    <div class="space-frame y" id="two_panel_top_bottom">
+        <div class="space-scrubber">
+        </div>
+        <div class="space-panel"><img src="kitty_green.jpg" /></div>
+        <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+    </div>
+  </body>
+</html>

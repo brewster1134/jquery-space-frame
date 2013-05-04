@@ -1,10 +1,10 @@
-#
+###
 # * spaceFrame
 # * https://github.com/brewster1134/jquery-space-frame
 # *
 # * Copyright (c) 2012 Ryan Brewster
 # * Licensed under the MIT license.
-#
+###
 
 # usage: log('inside coolFunc',this,arguments);
 # paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
@@ -96,8 +96,8 @@ window.log = ->
 
     animate: (positionArray) ->
       @each ->
-        if $(@).data('spaceFrame')
-          $sf = $(@).data('spaceFrame').target
+        if $(@).data('space-frame')
+          $sf = $(@).data('space-frame').target
           xPos = positionArray[0]
           yPos = positionArray[1]
           clipPanels $sf, xPos, yPos, true
@@ -105,7 +105,7 @@ window.log = ->
     refresh: ->
       @each ->
         $sf = $(@)
-        $sf.data('spaceFrame', null) if $(@).data('spaceFrame')
+        $sf.data('space-frame', null) if $(@).data('space-frame')
         $sf.spaceFrame('init')
 
     destroy: ->
@@ -113,7 +113,7 @@ window.log = ->
         $sf = $(@)
         $sf.find('.space-scrubber').hide()
         $sf.find('.space-panel').css('clip', '')
-        $sf.data('spaceFrame', null)
+        $sf.data('space-frame', null)
 
 
   $.fn.spaceFrame = (method) ->

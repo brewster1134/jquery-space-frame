@@ -1,3 +1,2 @@
-node_modules
-dist/spaceFrame.js.js
-*cache
+.sass-cache
+spec/*.js
