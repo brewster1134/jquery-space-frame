@@ -5,6 +5,13 @@
 
 Space Frame allows you to use up to 4 images to transition between using a scrubber.  You can use 2 images and restrict movement to just horizontal or vertical as well.
 
+## Support
+
+* Chrome
+* Firefox
+* Safari
+* IE9/IE10 (IE8 and below untested)
+
 ## Dependencies
 
 * [jQuery](http://jquery.com) version 1.8.0 or greater
@@ -121,7 +128,5 @@ _(Nothing yet)_
 ## TODO
 
 * TESTS!
-* Test with IE
-  The jQuery.fx clip animation has issues in IE with using 'clip' as a css property.  Need to investigate how the jquery.fx.animate function handles css properties.
 * Add functionality to iOS
   Need to integrate iOS' touchmove event into the spaceFrame
