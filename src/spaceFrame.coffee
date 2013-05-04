@@ -136,10 +136,10 @@ window.log = ->
       clipPanel sf.panelTwo, 0, sf.maxContentWidth, yPos, xPos, animate
       clipPanel sf.panelThree, yPos, xPos, sf.maxContentHeight, 0, animate
       clipPanel sf.panelFour, yPos, sf.maxContentWidth, sf.maxContentHeight, xPos, animate
-    if animate == true
+    if animate
       sf.find('.space-scrubber').animate
-        top: xPos,
-        left: yPos
+        top: yPos,
+        left: xPos
       , sf.options.speed
 
   clipPanel = (panel, top, right, bottom, left, animate) ->
@@ -148,7 +148,7 @@ window.log = ->
       panel.css
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
 
-    if animate == true
+    if animate
       panel.stop(true).animate
         clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
       ,

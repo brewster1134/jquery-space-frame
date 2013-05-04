@@ -181,10 +181,10 @@
         clipPanel(sf.panelThree, yPos, xPos, sf.maxContentHeight, 0, animate);
         clipPanel(sf.panelFour, yPos, sf.maxContentWidth, sf.maxContentHeight, xPos, animate);
       }
-      if (animate === true) {
+      if (animate) {
         return sf.find('.space-scrubber').animate({
-          top: xPos,
-          left: yPos
+          top: yPos,
+          left: xPos
         }, sf.options.speed);
       }
     };
@@ -196,7 +196,7 @@
           clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
         });
       };
-      if (animate === true) {
+      if (animate) {
         return panel.stop(true).animate({
           clip: 'rect(' + top + 'px, ' + right + 'px, ' + bottom + 'px, ' + left + 'px)'
         }, {
