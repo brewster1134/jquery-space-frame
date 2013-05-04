@@ -3,7 +3,9 @@
 
 ![Space Frame](http://i.imgur.com/W9sXrgK.gif)
 
-Space Frame allows you to use up to 4 images to transition between using a scrubber.  You can use 2 images and restrict movement to just horizontal or vertical as well.
+Space Frame allows you to use up to 4 pieces of content to transition between using a scrubber.  You can use 2 pieces of content and restrict movement to just horizontal or vertical as well.
+
+The example above (as well as the demo) use 4 images, but you can use any html content to transition between.
 
 ## Support
 
@@ -35,56 +37,40 @@ Panels are not only restricted to images.  Any content can be used *however* the
 space frame is sized based on the computed width/height of the largest panel.
 Being explicit with the sizing of content will present more desirable results :)
 
-#### JS
+```html
+<div class="space-frame" id="four_panel">
+  <div class="space-scrubber"></div>
+  <div class="space-panel"><img src="kitty.jpg" /></div>
+  <div class="space-panel"><img src="kitty_red.jpg" /></div>
+  <div class="space-panel"><img src="kitty_green.jpg" /></div>
+  <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+</div>
 
-When initializing the space frame `$(window).load()` is preferred over
-`$(document).ready()`.  If the panels contain images, the panels may be
-incorrectly sized before the images are loaded.  This problem was noticed with
-WebKit computing width/height of the various panels.
+<div class="space-frame x" id="two_panel_left_right">
+  <div class="space-scrubber"></div>
+  <div class="space-panel"><img src="kitty_red.jpg" /></div>
+  <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+</div>
 
-## Examples
-
-#### HTML (shown in HAML)
-
-``` haml
-%h1 4 Panel
-.space-frame#four_panel
-  .space-scrubber
-  .space-panel
-    %img{ src: 'kitty.jpg'}
-  .space-panel
-    %img{ src: 'kitty_red.jpg'}
-  .space-panel
-    %img{ src: 'kitty_green.jpg'}
-  .space-panel
-    %img{ src: 'kitty_blue.jpg'}
-
-%h1 2 Panel Left/Right
-.space-frame.x#two_panel_left_right
-  .space-scrubber
-  .space-panel
-    %img{ src: 'kitty_red.jpg'}
-  .space-panel
-    %img{ src: 'kitty_blue.jpg'}
-
-%h1 2 Panel Top/Bottom
-.space-frame.y#two_panel_top_bottom
-  .space-scrubber
-  .space-panel
-    %img{ src: 'kitty_green.jpg'}
-  .space-panel
-    %img{ src: 'kitty_blue.jpg'}
+<div class="space-frame y" id="two_panel_top_bottom">
+  <div class="space-scrubber"></div>
+  <div class="space-panel"><img src="kitty_green.jpg" /></div>
+  <div class="space-panel"><img src="kitty_blue.jpg" /></div>
+</div>
 ```
 
-#### JS (shown in CoffeeScript)
+#### JS
 
-Initialize the spaceframe
+Initialize the space frame.
 
-``` coffee-script
-(($) ->
-  $(window).load ->
-    $('.space-frame').SpaceFrame()
-) jQuery
+The space frame sets its size based on the width and height of the largest panel.  This means the content needs to be loaded, or the size explicitly set before initializing the space frame.
+
+* Explicitly set the width and height on the `.space-panel` elements with CSS
+* If you are using images, you can use a library such as [imagesloaded](https://github.com/desandro/imagesloaded) or explicitly set width and height on your space-panels to ensure the desired behavior.
+* You may also be able to use jquery's [.load](http://api.jquery.com/load-event/) event.
+
+```js
+$('.space-frame').spaceFrame();
 ```
 
 #### Demo
