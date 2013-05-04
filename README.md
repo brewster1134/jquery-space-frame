@@ -1,6 +1,7 @@
 # Space Frame
+![Space Frame](http://i.imgur.com/W9sXrgK.gif)
 
-A space frame.
+Space Frame allows you to use up to 4 images to transition between using a scrubber.  You can use 2 images and restrict movement to just horizontal or vertical as well.
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
