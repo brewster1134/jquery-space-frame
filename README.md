@@ -8,6 +8,7 @@ Space Frame allows you to use up to 4 images to transition between using a scrub
 ## Dependencies
 
 * [jQuery](http://jquery.com) version 1.8.0 or greater
+  * _jQuery 2.0 does not support IE6/7/8_
 * [jQuery UI: Draggable](http://jqueryui.com/draggable/)
 
 ## Getting Started
