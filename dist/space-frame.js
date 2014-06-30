@@ -31,8 +31,6 @@
       _create: function() {
         this.$scrubber = this.element.find('.space-scrubber');
         this.$panels = this.element.find('.space-panel');
-        this.$scrubber.show();
-        this.$panels.show();
         this.panelWidth = this.$panels.eq(0).outerWidth();
         this.panelHeight = this.$panels.eq(0).outerHeight();
         this.options.position.x = this.panelWidth;
@@ -45,16 +43,26 @@
           width: this.panelWidth,
           height: this.panelHeight
         });
-        this.$panels.css({
-          position: 'absolute',
-          clip: "rect(0px, " + this.panelWidth + "px, " + this.panelHeight + "px, 0)"
-        });
         $(this.$panels.get().reverse()).each(function(i, el) {
           return $(el).css({
             zIndex: i + 1
           });
         });
         return this._events();
+      },
+      _init: function() {
+        this.options.position.x = this.panelWidth;
+        this.options.position.y = this.panelHeight;
+        this.$scrubber.add(this.$panels).css({
+          transitionProperty: 'none'
+        });
+        this._positionScrubber(this.panelWidth, this.panelHeight);
+        this.$panels.css({
+          position: 'absolute',
+          clip: "rect(0px, " + this.panelWidth + "px, " + this.panelHeight + "px, 0)"
+        });
+        this.$scrubber.show();
+        return this.$panels.show();
       },
       _events: function() {
         var drag;
@@ -150,7 +158,6 @@
         if (timing == null) {
           timing = this.options.transitionTiming;
         }
-        console.log(x, y, duration, timing);
         this.$scrubber.css({
           transitionProperty: 'left, top',
           transitionDuration: "" + duration + "s",
@@ -165,6 +172,16 @@
         this.options.position.y = y;
         this._positionScrubber(x, y);
         return this._clipPanels(x, y);
+      },
+      destroy: function() {
+        this.$scrubber.hide();
+        this.$panels.not(this.$panels.eq(0)).hide();
+        this.$panels.eq(0).css({
+          position: 'relative'
+        });
+        return this.$panels.css({
+          clip: 'inherit'
+        });
       }
     });
   });

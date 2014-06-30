@@ -30,9 +30,6 @@
       @$scrubber = @element.find('.space-scrubber')
       @$panels = @element.find('.space-panel')
 
-      @$scrubber.show()
-      @$panels.show()
-
       # get size of first panel
       @panelWidth = @$panels.eq(0).outerWidth()
       @panelHeight = @$panels.eq(0).outerHeight()
@@ -49,17 +46,29 @@
         width: @panelWidth
         height: @panelHeight
 
-      # set the default styles to the panels
-      @$panels.css
-        position: 'absolute'
-        clip: "rect(0px, #{@panelWidth}px, #{@panelHeight}px, 0)"
-
       # reverse z-indexing stacking to match markup
       $(@$panels.get().reverse()).each (i, el) ->
         $(el).css
           zIndex: i + 1
 
       @_events()
+
+    _init: ->
+      # reset position
+      @options.position.x = @panelWidth
+      @options.position.y = @panelHeight
+
+      # remove css transitions
+      @$scrubber.add(@$panels).css
+        transitionProperty: 'none'
+
+      @_positionScrubber @panelWidth, @panelHeight
+      @$panels.css
+        position: 'absolute'
+        clip: "rect(0px, #{@panelWidth}px, #{@panelHeight}px, 0)"
+
+      @$scrubber.show()
+      @$panels.show()
 
     _events: ->
       drag = false
@@ -128,7 +137,6 @@
         clip: "rect(#{scrubberTop}, #{scrubberLeft}, #{panelHeight}, 0px)"
 
     animate: (x, y, duration = @options.transitionDuration, timing = @options.transitionTiming) ->
-      console.log x, y, duration, timing
       # enable css transitions
       @$scrubber.css
         transitionProperty: 'left, top'
@@ -144,3 +152,11 @@
       @options.position.y = y
       @_positionScrubber x, y
       @_clipPanels x, y
+
+    destroy: ->
+      @$scrubber.hide()
+      @$panels.not(@$panels.eq(0)).hide()
+      @$panels.eq(0).css
+        position: 'relative'
+      @$panels.css
+        clip: 'inherit'

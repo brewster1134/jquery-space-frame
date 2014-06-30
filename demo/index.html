@@ -24,10 +24,10 @@
           $('button#animate').click(function() {
             var randomWidth = Math.floor(Math.random()*501);
             var randomHeight = Math.floor(Math.random()*376);
-            $('.space-frame').spaceframe('animate', [randomWidth, randomHeight]);
+            $('.space-frame').spaceframe('animate', randomWidth, randomHeight);
           });
           $('button#refresh').click(function() {
-            $('.space-frame').spaceframe('refresh');
+            $('.space-frame').spaceframe();
           });
           $('button#destroy').click(function() {
             $('.space-frame').spaceframe('destroy');
