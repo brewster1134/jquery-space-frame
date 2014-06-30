@@ -32,22 +32,6 @@
       @$scrubber = @element.find('.space-scrubber')
       @$panels = @element.find('.space-panel')
 
-      # get size of first panel
-      @panelWidth = @$panels.eq(0).outerWidth()
-      @panelHeight = @$panels.eq(0).outerHeight()
-
-      @options.position.x = @panelWidth
-      @options.position.y = @panelHeight
-
-      @$scrubber.css
-        left: @options.position.x
-        top: @options.position.y
-
-      # set size of space frame to match the first panel
-      @element.css
-        width: @panelWidth
-        height: @panelHeight
-
       # reverse z-indexing stacking to match markup
       $(@$panels.get().reverse()).each (i, el) ->
         $(el).css
@@ -56,25 +40,39 @@
       @_events()
 
     _init: ->
+      # get size of first panel
+      @panelWidth = @$panels.eq(0).outerWidth()
+      @panelHeight = @$panels.eq(0).outerHeight()
+
+      # SET OPTIONS
       # set axis
       unless @options.axis
         @options.axis = @element.data('space-axis')
 
-      # reset position
+      # set position
       @options.position.x = @panelWidth
       @options.position.y = @panelHeight
+
+      # STYLE ELEMENTS
+      # size the space frame
+      @element.css
+        width: @panelWidth
+        height: @panelHeight
 
       # remove css transitions
       @$scrubber.add(@$panels).css
         transitionProperty: 'none'
 
-      @_positionScrubber @panelWidth, @panelHeight
+      # move the scrubber into starting position
+      @_positionScrubber @options.position.x, @options.position.y
+
+      # set initial clipping
       @$panels.css
         position: 'absolute'
         clip: "rect(0px, #{@panelWidth}px, #{@panelHeight}px, 0)"
 
-      @$scrubber.show()
-      @$panels.show()
+      # make sure all elements ar visible
+      @$scrubber.add(@$panels).show()
 
     _events: ->
       drag = false
@@ -92,7 +90,7 @@
         @options.position.x = eventPosition.x - @options.position.x
         @options.position.y = eventPosition.y - @options.position.y
 
-      @element.on 'mousemove touchmove', (e) =>
+      $('body').on 'mousemove touchmove', (e) =>
         return unless drag
         return if Modernizr?.touch && e.type == 'mousemove'
         e.preventDefault()
@@ -100,6 +98,12 @@
         eventPosition = @_getPositionFromEvent e
         left = eventPosition.x - @options.position.x
         top = eventPosition.y - @options.position.y
+
+        # limit to space frame
+        left = 0 if left < 0
+        left = @panelWidth if left > @panelWidth
+        top = 0 if top < 0
+        top = @panelHeight if top > @panelHeight
 
         @_positionScrubber left, top
         @_clipPanels left, top

@@ -33,18 +33,6 @@
       _create: function() {
         this.$scrubber = this.element.find('.space-scrubber');
         this.$panels = this.element.find('.space-panel');
-        this.panelWidth = this.$panels.eq(0).outerWidth();
-        this.panelHeight = this.$panels.eq(0).outerHeight();
-        this.options.position.x = this.panelWidth;
-        this.options.position.y = this.panelHeight;
-        this.$scrubber.css({
-          left: this.options.position.x,
-          top: this.options.position.y
-        });
-        this.element.css({
-          width: this.panelWidth,
-          height: this.panelHeight
-        });
         $(this.$panels.get().reverse()).each(function(i, el) {
           return $(el).css({
             zIndex: i + 1
@@ -53,21 +41,26 @@
         return this._events();
       },
       _init: function() {
+        this.panelWidth = this.$panels.eq(0).outerWidth();
+        this.panelHeight = this.$panels.eq(0).outerHeight();
         if (!this.options.axis) {
           this.options.axis = this.element.data('space-axis');
         }
         this.options.position.x = this.panelWidth;
         this.options.position.y = this.panelHeight;
+        this.element.css({
+          width: this.panelWidth,
+          height: this.panelHeight
+        });
         this.$scrubber.add(this.$panels).css({
           transitionProperty: 'none'
         });
-        this._positionScrubber(this.panelWidth, this.panelHeight);
+        this._positionScrubber(this.options.position.x, this.options.position.y);
         this.$panels.css({
           position: 'absolute',
           clip: "rect(0px, " + this.panelWidth + "px, " + this.panelHeight + "px, 0)"
         });
-        this.$scrubber.show();
-        return this.$panels.show();
+        return this.$scrubber.add(this.$panels).show();
       },
       _events: function() {
         var drag;
@@ -88,7 +81,7 @@
             return _this.options.position.y = eventPosition.y - _this.options.position.y;
           };
         })(this));
-        this.element.on('mousemove touchmove', (function(_this) {
+        $('body').on('mousemove touchmove', (function(_this) {
           return function(e) {
             var eventPosition, left, top;
             if (!drag) {
@@ -101,6 +94,18 @@
             eventPosition = _this._getPositionFromEvent(e);
             left = eventPosition.x - _this.options.position.x;
             top = eventPosition.y - _this.options.position.y;
+            if (left < 0) {
+              left = 0;
+            }
+            if (left > _this.panelWidth) {
+              left = _this.panelWidth;
+            }
+            if (top < 0) {
+              top = 0;
+            }
+            if (top > _this.panelHeight) {
+              top = _this.panelHeight;
+            }
             _this._positionScrubber(left, top);
             return _this._clipPanels(left, top);
           };
