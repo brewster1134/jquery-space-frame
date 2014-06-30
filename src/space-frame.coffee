@@ -22,6 +22,8 @@
     options:
       transitionDuration: 0.15
       transitionTiming: 'ease'
+      axis: null
+      lockScrubber: true
       position:
         x: 0
         y: 0
@@ -54,6 +56,10 @@
       @_events()
 
     _init: ->
+      # set axis
+      unless @options.axis
+        @options.axis = @element.data('space-axis')
+
       # reset position
       @options.position.x = @panelWidth
       @options.position.y = @panelHeight
@@ -119,9 +125,20 @@
       return { x: x, y: y }
 
     _positionScrubber: (x, y) ->
-      @$scrubber.css
-        left: x
-        top: y
+      lock = @options.lockScrubber
+      axis = @options.axis
+
+      if lock && axis
+        if axis == 'x'
+          @$scrubber.css
+            left: x
+        else if axis == 'y'
+          @$scrubber.css
+            top: y
+      else
+        @$scrubber.css
+          left: x
+          top: y
 
     _clipPanels: (x, y) ->
       scrubberLeft = "#{x}px"
@@ -129,12 +146,19 @@
       panelWidth = "#{@panelWidth}px"
       panelHeight = "#{@panelHeight}px"
 
-      @$panels.eq(0).css
-        clip: "rect(0px, #{scrubberLeft}, #{scrubberTop}, 0px)"
-      @$panels.eq(1).css
-        clip: "rect(0px, #{panelWidth}, #{scrubberTop}, #{scrubberLeft})"
-      @$panels.eq(2).css
-        clip: "rect(#{scrubberTop}, #{scrubberLeft}, #{panelHeight}, 0px)"
+      if @options.axis == 'x'
+        @$panels.eq(0).css
+          clip: "rect(0px, #{scrubberLeft}, #{panelHeight}, 0px)"
+      else if @options.axis == 'y'
+        @$panels.eq(0).css
+          clip: "rect(0px, #{panelWidth}, #{scrubberTop}, 0px)"
+      else
+        @$panels.eq(0).css
+          clip: "rect(0px, #{scrubberLeft}, #{scrubberTop}, 0px)"
+        @$panels.eq(1).css
+          clip: "rect(0px, #{panelWidth}, #{scrubberTop}, #{scrubberLeft})"
+        @$panels.eq(2).css
+          clip: "rect(#{scrubberTop}, #{scrubberLeft}, #{panelHeight}, 0px)"
 
     animate: (x, y, duration = @options.transitionDuration, timing = @options.transitionTiming) ->
       # enable css transitions

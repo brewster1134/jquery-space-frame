@@ -23,6 +23,8 @@
       options: {
         transitionDuration: 0.15,
         transitionTiming: 'ease',
+        axis: null,
+        lockScrubber: true,
         position: {
           x: 0,
           y: 0
@@ -51,6 +53,9 @@
         return this._events();
       },
       _init: function() {
+        if (!this.options.axis) {
+          this.options.axis = this.element.data('space-axis');
+        }
         this.options.position.x = this.panelWidth;
         this.options.position.y = this.panelHeight;
         this.$scrubber.add(this.$panels).css({
@@ -130,10 +135,25 @@
         };
       },
       _positionScrubber: function(x, y) {
-        return this.$scrubber.css({
-          left: x,
-          top: y
-        });
+        var axis, lock;
+        lock = this.options.lockScrubber;
+        axis = this.options.axis;
+        if (lock && axis) {
+          if (axis === 'x') {
+            return this.$scrubber.css({
+              left: x
+            });
+          } else if (axis === 'y') {
+            return this.$scrubber.css({
+              top: y
+            });
+          }
+        } else {
+          return this.$scrubber.css({
+            left: x,
+            top: y
+          });
+        }
       },
       _clipPanels: function(x, y) {
         var panelHeight, panelWidth, scrubberLeft, scrubberTop;
@@ -141,15 +161,25 @@
         scrubberTop = "" + y + "px";
         panelWidth = "" + this.panelWidth + "px";
         panelHeight = "" + this.panelHeight + "px";
-        this.$panels.eq(0).css({
-          clip: "rect(0px, " + scrubberLeft + ", " + scrubberTop + ", 0px)"
-        });
-        this.$panels.eq(1).css({
-          clip: "rect(0px, " + panelWidth + ", " + scrubberTop + ", " + scrubberLeft + ")"
-        });
-        return this.$panels.eq(2).css({
-          clip: "rect(" + scrubberTop + ", " + scrubberLeft + ", " + panelHeight + ", 0px)"
-        });
+        if (this.options.axis === 'x') {
+          return this.$panels.eq(0).css({
+            clip: "rect(0px, " + scrubberLeft + ", " + panelHeight + ", 0px)"
+          });
+        } else if (this.options.axis === 'y') {
+          return this.$panels.eq(0).css({
+            clip: "rect(0px, " + panelWidth + ", " + scrubberTop + ", 0px)"
+          });
+        } else {
+          this.$panels.eq(0).css({
+            clip: "rect(0px, " + scrubberLeft + ", " + scrubberTop + ", 0px)"
+          });
+          this.$panels.eq(1).css({
+            clip: "rect(0px, " + panelWidth + ", " + scrubberTop + ", " + scrubberLeft + ")"
+          });
+          return this.$panels.eq(2).css({
+            clip: "rect(" + scrubberTop + ", " + scrubberLeft + ", " + panelHeight + ", 0px)"
+          });
+        }
       },
       animate: function(x, y, duration, timing) {
         if (duration == null) {
