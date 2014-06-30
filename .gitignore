@@ -1,2 +1,3 @@
 .sass-cache
-spec/*.js
+.tmp
+vendor

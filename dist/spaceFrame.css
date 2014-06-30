@@ -1,8 +1,0 @@
-.space-frame {
-  position: relative; }
-  .space-frame .space-scrubber {
-    z-index: 5;
-    position: absolute;
-    cursor: move; }
-  .space-frame .space-panel {
-    position: absolute; }

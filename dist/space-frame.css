@@ -1,0 +1,17 @@
+.space-frame {
+  position: relative; }
+  .space-frame .space-scrubber {
+    cursor: move;
+    display: none;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 5; }
+  .space-frame .space-panel {
+    display: none;
+    left: 0;
+    position: absolute;
+    top: 0; }
+    .space-frame .space-panel:first-child {
+      display: inline-block;
+      position: relative; }
