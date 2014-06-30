@@ -24,13 +24,20 @@
           $('button#animate').click(function() {
             var randomWidth = Math.floor(Math.random()*501);
             var randomHeight = Math.floor(Math.random()*376);
-            $('.space-frame').spaceframe('animate', randomWidth, randomHeight);
+
+            $('.space-frame').each(function(i, el) {
+              $(el).spaceframe('animate', randomWidth, randomHeight);
+            });
           });
           $('button#refresh').click(function() {
-            $('.space-frame').spaceframe();
+            $('.space-frame').each(function(i, el) {
+              $(el).spaceframe();
+            });
           });
           $('button#destroy').click(function() {
-            $('.space-frame').spaceframe('destroy');
+            $('.space-frame').each(function(i, el) {
+              $(el).spaceframe('destroy');
+            });
           });
         });
       })(jQuery);
@@ -41,7 +48,7 @@
     <button id="refresh">Refresh</button>
     <button id="destroy">Destroy</button>
     <h1>4 Panel</h1>
-    <div class="space-frame" id="four_panel">
+    <div class="space-frame">
         <div class="space-panel"><img src="kitty.jpg" /></div>
         <div class="space-panel"><img src="kitty_red.jpg" /></div>
         <div class="space-panel"><img src="kitty_green.jpg" /></div>
@@ -49,13 +56,13 @@
         <div class="space-scrubber"></div>
     </div>
     <h1>2 Panel Left/Right</h1>
-    <div class="space-frame" data-space-axis="x" id="two_panel_left_right">
+    <div class="space-frame" data-space-axis="x">
         <div class="space-panel"><img src="kitty_red.jpg" /></div>
         <div class="space-panel"><img src="kitty_blue.jpg" /></div>
         <div class="space-scrubber"></div>
     </div>
     <h1>2 Panel Top/Bottom</h1>
-    <div class="space-frame" data-space-axis="y" id="two_panel_top_bottom">
+    <div class="space-frame" data-space-axis="y">
         <div class="space-panel"><img src="kitty_green.jpg" /></div>
         <div class="space-panel"><img src="kitty_blue.jpg" /></div>
         <div class="space-scrubber"></div>

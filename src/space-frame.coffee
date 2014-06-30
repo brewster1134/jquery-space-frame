@@ -40,9 +40,20 @@
       @_events()
 
     _init: ->
+      # remove any sizing that might exist
+      @element.css
+        width: 'auto'
+        height: 'auto'
+
       # get size of first panel
       @panelWidth = @$panels.eq(0).outerWidth()
       @panelHeight = @$panels.eq(0).outerHeight()
+
+      # STYLE ELEMENTS
+      # size the space frame
+      @element.css
+        width: @panelWidth
+        height: @panelHeight
 
       # SET OPTIONS
       # set axis
@@ -53,11 +64,6 @@
       @options.position.x = @panelWidth
       @options.position.y = @panelHeight
 
-      # STYLE ELEMENTS
-      # size the space frame
-      @element.css
-        width: @panelWidth
-        height: @panelHeight
 
       # remove css transitions
       @$scrubber.add(@$panels).css
@@ -184,7 +190,9 @@
     destroy: ->
       @$scrubber.hide()
       @$panels.not(@$panels.eq(0)).hide()
+
       @$panels.eq(0).css
         position: 'relative'
+
       @$panels.css
         clip: 'inherit'

@@ -41,17 +41,21 @@
         return this._events();
       },
       _init: function() {
+        this.element.css({
+          width: 'auto',
+          height: 'auto'
+        });
         this.panelWidth = this.$panels.eq(0).outerWidth();
         this.panelHeight = this.$panels.eq(0).outerHeight();
+        this.element.css({
+          width: this.panelWidth,
+          height: this.panelHeight
+        });
         if (!this.options.axis) {
           this.options.axis = this.element.data('space-axis');
         }
         this.options.position.x = this.panelWidth;
         this.options.position.y = this.panelHeight;
-        this.element.css({
-          width: this.panelWidth,
-          height: this.panelHeight
-        });
         this.$scrubber.add(this.$panels).css({
           transitionProperty: 'none'
         });
