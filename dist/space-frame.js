@@ -113,7 +113,7 @@
             return _this._clipPanels(left, top);
           };
         })(this));
-        return this.element.on('mouseup touchend', (function(_this) {
+        return $('body').on('mouseup touchend', (function(_this) {
           return function(e) {
             var left, top;
             if ((typeof Modernizr !== "undefined" && Modernizr !== null ? Modernizr.touch : void 0) && e.type === 'mouseup') {

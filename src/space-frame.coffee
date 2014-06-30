@@ -110,7 +110,7 @@
         @_positionScrubber left, top
         @_clipPanels left, top
 
-      @element.on 'mouseup touchend', (e) =>
+      $('body').on 'mouseup touchend', (e) =>
         return if Modernizr?.touch && e.type == 'mouseup'
         e.preventDefault()
 
