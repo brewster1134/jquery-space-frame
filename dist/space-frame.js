@@ -54,17 +54,16 @@
         if (!this.options.axis) {
           this.options.axis = this.element.data('space-axis');
         }
-        this.options.position.x = this.panelWidth;
-        this.options.position.y = this.panelHeight;
         this.$scrubber.add(this.$panels).css({
           transitionProperty: 'none'
         });
-        this._positionScrubber(this.options.position.x, this.options.position.y);
         this.$panels.css({
           position: 'absolute',
           clip: "rect(0px, " + this.panelWidth + "px, " + this.panelHeight + "px, 0)"
         });
-        return this.$scrubber.add(this.$panels).show();
+        this.$scrubber.add(this.$panels).show();
+        this._positionScrubber(this.options.position.x, this.options.position.y);
+        return this._clipPanels(this.options.position.x, this.options.position.y);
       },
       _events: function() {
         var drag;
@@ -171,22 +170,31 @@
         panelWidth = "" + this.panelWidth + "px";
         panelHeight = "" + this.panelHeight + "px";
         if (this.options.axis === 'x') {
-          return this.$panels.eq(0).css({
+          this.$panels.eq(0).css({
+            clip: "rect(0px, " + panelWidth + ", " + panelHeight + ", " + scrubberLeft + ")"
+          });
+          return this.$panels.eq(1).css({
             clip: "rect(0px, " + scrubberLeft + ", " + panelHeight + ", 0px)"
           });
         } else if (this.options.axis === 'y') {
-          return this.$panels.eq(0).css({
+          this.$panels.eq(0).css({
+            clip: "rect(" + scrubberTop + ", " + panelWidth + ", " + panelHeight + ", 0px)"
+          });
+          return this.$panels.eq(1).css({
             clip: "rect(0px, " + panelWidth + ", " + scrubberTop + ", 0px)"
           });
         } else {
           this.$panels.eq(0).css({
-            clip: "rect(0px, " + scrubberLeft + ", " + scrubberTop + ", 0px)"
+            clip: "rect(" + scrubberTop + ", " + panelWidth + ", " + panelHeight + ", " + scrubberLeft + ")"
           });
           this.$panels.eq(1).css({
+            clip: "rect(" + scrubberTop + ", " + scrubberLeft + ", " + panelHeight + ", 0px)"
+          });
+          this.$panels.eq(2).css({
             clip: "rect(0px, " + panelWidth + ", " + scrubberTop + ", " + scrubberLeft + ")"
           });
-          return this.$panels.eq(2).css({
-            clip: "rect(" + scrubberTop + ", " + scrubberLeft + ", " + panelHeight + ", 0px)"
+          return this.$panels.eq(3).css({
+            clip: "rect(0px, " + scrubberLeft + ", " + scrubberTop + ", 0px)"
           });
         }
       },
@@ -211,6 +219,11 @@
         this.options.position.y = y;
         this._positionScrubber(x, y);
         return this._clipPanels(x, y);
+      },
+      refresh: function() {
+        this.options.position.x = 0;
+        this.options.position.y = 0;
+        return this._init();
       },
       destroy: function() {
         this.$scrubber.hide();

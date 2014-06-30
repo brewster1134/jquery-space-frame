@@ -40,6 +40,7 @@
       @_events()
 
     _init: ->
+      # RESIZE
       # remove any sizing that might exist
       @element.css
         width: 'auto'
@@ -49,8 +50,7 @@
       @panelWidth = @$panels.eq(0).outerWidth()
       @panelHeight = @$panels.eq(0).outerHeight()
 
-      # STYLE ELEMENTS
-      # size the space frame
+      # reset the space frame size
       @element.css
         width: @panelWidth
         height: @panelHeight
@@ -60,17 +60,9 @@
       unless @options.axis
         @options.axis = @element.data('space-axis')
 
-      # set position
-      @options.position.x = @panelWidth
-      @options.position.y = @panelHeight
-
-
       # remove css transitions
       @$scrubber.add(@$panels).css
         transitionProperty: 'none'
-
-      # move the scrubber into starting position
-      @_positionScrubber @options.position.x, @options.position.y
 
       # set initial clipping
       @$panels.css
@@ -79,6 +71,10 @@
 
       # make sure all elements ar visible
       @$scrubber.add(@$panels).show()
+
+      # move the scrubber into starting position
+      @_positionScrubber @options.position.x, @options.position.y
+      @_clipPanels @options.position.x, @options.position.y
 
     _events: ->
       drag = false
@@ -158,17 +154,23 @@
 
       if @options.axis == 'x'
         @$panels.eq(0).css
+          clip: "rect(0px, #{panelWidth}, #{panelHeight}, #{scrubberLeft})"
+        @$panels.eq(1).css
           clip: "rect(0px, #{scrubberLeft}, #{panelHeight}, 0px)"
       else if @options.axis == 'y'
         @$panels.eq(0).css
+          clip: "rect(#{scrubberTop}, #{panelWidth}, #{panelHeight}, 0px)"
+        @$panels.eq(1).css
           clip: "rect(0px, #{panelWidth}, #{scrubberTop}, 0px)"
       else
         @$panels.eq(0).css
-          clip: "rect(0px, #{scrubberLeft}, #{scrubberTop}, 0px)"
+          clip: "rect(#{scrubberTop}, #{panelWidth}, #{panelHeight}, #{scrubberLeft})"
         @$panels.eq(1).css
-          clip: "rect(0px, #{panelWidth}, #{scrubberTop}, #{scrubberLeft})"
-        @$panels.eq(2).css
           clip: "rect(#{scrubberTop}, #{scrubberLeft}, #{panelHeight}, 0px)"
+        @$panels.eq(2).css
+          clip: "rect(0px, #{panelWidth}, #{scrubberTop}, #{scrubberLeft})"
+        @$panels.eq(3).css
+          clip: "rect(0px, #{scrubberLeft}, #{scrubberTop}, 0px)"
 
     animate: (x, y, duration = @options.transitionDuration, timing = @options.transitionTiming) ->
       # enable css transitions
@@ -186,6 +188,13 @@
       @options.position.y = y
       @_positionScrubber x, y
       @_clipPanels x, y
+
+    refresh: ->
+      # set position
+      @options.position.x = 0
+      @options.position.y = 0
+
+      @_init()
 
     destroy: ->
       @$scrubber.hide()

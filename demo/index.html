@@ -20,7 +20,7 @@
     <script>
       (function($) {
         $(window).load(function() {
-          $('.space-frame').spaceframe();
+          $('.space-frame').spaceframe({position: {x: 100, y: 100}});
           $('button#animate').click(function() {
             var randomWidth = Math.floor(Math.random()*501);
             var randomHeight = Math.floor(Math.random()*376);
@@ -31,7 +31,7 @@
           });
           $('button#refresh').click(function() {
             $('.space-frame').each(function(i, el) {
-              $(el).spaceframe();
+              $(el).spaceframe('refresh');
             });
           });
           $('button#destroy').click(function() {
