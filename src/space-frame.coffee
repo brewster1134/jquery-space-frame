@@ -20,7 +20,7 @@
   $.widget 'ui.spaceframe',
     widgetEventPrefix: 'spaceframe'
     options:
-      transitionDuration: 0.15
+      transitionDuration: 200
       transitionTiming: 'ease'
       axis: null
       lockScrubber: true
@@ -28,9 +28,23 @@
         x: 0
         y: 0
 
+    # Find the neccessary elements and set basic attributes
+    #
+    # @return {Object} the space frame jquery-ui object
+    # @api private
+    #
     _create: ->
       @$scrubber = @element.find('.space-scrubber')
       @$panels = @element.find('.space-panel')
+
+      # remove css transitions
+      @$scrubber.add(@$panels).css
+        transitionProperty: 'none'
+
+      # remove any sizing that might exist
+      @element.css
+        width: 'auto'
+        height: 'auto'
 
       # reverse z-indexing stacking to match markup
       $(@$panels.get().reverse()).each (i, el) ->
@@ -39,12 +53,14 @@
 
       @_events()
 
+      return this
+
+    # Size the space frame based on content, determine if 2 or 4 panel
+    #
+    # @return {Object} the space frame jquery-ui object
+    # @api private
+    #
     _init: ->
-      # RESIZE
-      # remove any sizing that might exist
-      @element.css
-        width: 'auto'
-        height: 'auto'
 
       # get size of first panel
       @panelWidth = @$panels.eq(0).outerWidth()
@@ -55,14 +71,9 @@
         width: @panelWidth
         height: @panelHeight
 
-      # SET OPTIONS
       # set axis
       unless @options.axis
         @options.axis = @element.data('space-axis')
-
-      # remove css transitions
-      @$scrubber.add(@$panels).css
-        transitionProperty: 'none'
 
       # set initial clipping
       @$panels.css
@@ -75,6 +86,81 @@
       # move the scrubber into starting position
       @_positionScrubber @options.position.x, @options.position.y
       @_clipPanels @options.position.x, @options.position.y
+
+      return this
+
+    # Animate to the provided coordinates
+    #
+    # @example
+    #   $('.space-frame').space-frame 'animate', 50, 100, 200, 'ease-out'
+    #
+    # ** REQUIRED **
+    # @param {Integer} X coordinate relative from the left of the space frame
+    # @param {Integer} Y coordinate relative from the top of the space frame
+    #
+    # ** OPTIONAL **
+    # @param {String} CSS3 allowed value for animation-duration in milliseconds
+    # @param {String} CSS3 allowed value for animation-timing-function
+    #
+    # @return {Object} the space frame jquery-ui object
+    # @api public
+    #
+    animate: (x, y, duration = @options.transitionDuration, timing = @options.transitionTiming) ->
+
+      # enable css transitions
+      @$scrubber.css
+        transitionProperty: 'left, top'
+        transitionDuration: "#{duration}ms"
+        transitionTiming: timing
+
+      @$panels.css
+        transitionProperty: 'clip'
+        transitionDuration: "#{duration}ms"
+        transitionTiming: timing
+
+      @options.position.x = x
+      @options.position.y = y
+      @_positionScrubber x, y
+      @_clipPanels x, y
+
+      return this
+
+    # Refresh the space frame in case of changes to content
+    #
+    # @example
+    #   $('.space-frame').space-frame 'refresh'
+    #
+    # @return {Object} the space frame jquery-ui object
+    # @api public
+    #
+    refresh: ->
+      # reset position
+      @options.position.x = 0
+      @options.position.y = 0
+
+      @_init()
+
+      return this
+
+    # Hides the scrubber, and all but the first panel content
+    #
+    # @example
+    #   $('.space-frame').space-frame 'destroy'
+    #
+    # @return {Object} the space frame jquery-ui object
+    # @api public
+    #
+    destroy: ->
+      @$scrubber.hide()
+      @$panels.not(@$panels.eq(0)).hide()
+
+      @$panels.eq(0).css
+        position: 'relative'
+
+      @$panels.css
+        clip: 'inherit'
+
+      return this
 
     _events: ->
       drag = false
@@ -92,7 +178,7 @@
         @options.position.x = eventPosition.x - @options.position.x
         @options.position.y = eventPosition.y - @options.position.y
 
-      $('body').on 'mousemove touchmove', (e) =>
+      @element.on 'mousemove touchmove', (e) =>
         return unless drag
         return if Modernizr?.touch && e.type == 'mousemove'
         e.preventDefault()
@@ -101,16 +187,10 @@
         left = eventPosition.x - @options.position.x
         top = eventPosition.y - @options.position.y
 
-        # limit to space frame
-        left = 0 if left < 0
-        left = @panelWidth if left > @panelWidth
-        top = 0 if top < 0
-        top = @panelHeight if top > @panelHeight
-
         @_positionScrubber left, top
         @_clipPanels left, top
 
-      $('body').on 'mouseup touchend', (e) =>
+      @element.on 'mouseup touchend', (e) =>
         return if Modernizr?.touch && e.type == 'mouseup'
         e.preventDefault()
 
@@ -130,25 +210,43 @@
 
       return { x: x, y: y }
 
+    # make sure coordinates are within the space frame's boundaries
+    #
+    _normalizeCoordinates: (x, y) ->
+      # limit to space frame
+      x = 0 if x < 0
+      x = @panelWidth if x > @panelWidth
+      y = 0 if y < 0
+      y = @panelHeight if y > @panelHeight
+
+      return {
+        x: x
+        y: y
+      }
+
+    # move the scrubber into position to match the clipped panels
+    #
     _positionScrubber: (x, y) ->
-      lock = @options.lockScrubber
       axis = @options.axis
+      lock = @options.lockScrubber
+      coords = @_normalizeCoordinates x, y
 
       if lock && axis
         if axis == 'x'
           @$scrubber.css
-            left: x
+            left: coords.x
         else if axis == 'y'
           @$scrubber.css
-            top: y
+            top: coords.y
       else
         @$scrubber.css
-          left: x
-          top: y
+          left: coords.x
+          top: coords.y
 
     _clipPanels: (x, y) ->
-      scrubberLeft = "#{x}px"
-      scrubberTop = "#{y}px"
+      coords = @_normalizeCoordinates x, y
+      scrubberLeft = "#{coords.x}px"
+      scrubberTop = "#{coords.y}px"
       panelWidth = "#{@panelWidth}px"
       panelHeight = "#{@panelHeight}px"
 
@@ -171,37 +269,3 @@
           clip: "rect(0px, #{panelWidth}, #{scrubberTop}, #{scrubberLeft})"
         @$panels.eq(3).css
           clip: "rect(0px, #{scrubberLeft}, #{scrubberTop}, 0px)"
-
-    animate: (x, y, duration = @options.transitionDuration, timing = @options.transitionTiming) ->
-      # enable css transitions
-      @$scrubber.css
-        transitionProperty: 'left, top'
-        transitionDuration: "#{duration}s"
-        transitionTiming: timing
-
-      @$panels.css
-        transitionProperty: 'clip'
-        transitionDuration: "#{duration}s"
-        transitionTiming: timing
-
-      @options.position.x = x
-      @options.position.y = y
-      @_positionScrubber x, y
-      @_clipPanels x, y
-
-    refresh: ->
-      # set position
-      @options.position.x = 0
-      @options.position.y = 0
-
-      @_init()
-
-    destroy: ->
-      @$scrubber.hide()
-      @$panels.not(@$panels.eq(0)).hide()
-
-      @$panels.eq(0).css
-        position: 'relative'
-
-      @$panels.css
-        clip: 'inherit'
